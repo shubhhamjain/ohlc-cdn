@@ -856,11 +856,14 @@ window.addEventListener('focus', () => {
     document.body.style.filter = 'none';
 });
 
-// Auto-load secure PDF
+// Configuration
 const SERVER_URL = 'https://secure-pdf-server.shubhham-jain.workers.dev';
 const PDF_FILENAME = 'OuakGZqdLSHfdmgITucteMiV.pdf'; // CHANGE THIS LINE ONLY
 
-async function autoLoadSecurePDF() {
+// Auto-load secure PDF when PDF.js is ready
+document.addEventListener('webviewerloaded', async function() {
+    console.log('PDF.js viewer loaded, requesting secure access...');
+    
     try {
         // Request secure access
         const response = await fetch(`${SERVER_URL}/api/secure-access`, {
@@ -872,50 +875,52 @@ async function autoLoadSecurePDF() {
             body: JSON.stringify({ filename: PDF_FILENAME })
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: Access denied`);
+        }
+
         const data = await response.json();
         
         if (data.success) {
             // Get the secure PDF URL
             const secureUrl = `${SERVER_URL}${data.viewerUrl}`;
+            console.log('Secure URL obtained, loading PDF:', secureUrl);
             
-            // Set the PDF URL for PDF.js to load
-            const params = new URLSearchParams();
-            params.set('file', secureUrl);
-            
-            // Update the current page URL to include the PDF file parameter
-            const newUrl = window.location.pathname + '?' + params.toString();
-            window.history.replaceState({}, '', newUrl);
-            
-            // Trigger PDF.js to load the file
-            if (window.PDFViewerApplication) {
-                window.PDFViewerApplication.open(secureUrl);
+            // Load the PDF using PDFViewerApplication
+            if (window.PDFViewerApplication && window.PDFViewerApplication.open) {
+                await window.PDFViewerApplication.open(secureUrl);
+                console.log('PDF loaded successfully');
             } else {
-                // If PDFViewerApplication isn't ready yet, wait for it
-                document.addEventListener('webviewerloaded', () => {
-                    window.PDFViewerApplication.open(secureUrl);
-                });
+                throw new Error('PDFViewerApplication not available');
             }
         } else {
-            console.error('Failed to get secure access:', data.error);
-            alert('Access denied: ' + data.error);
+            throw new Error(data.error || 'Access denied');
         }
     } catch (error) {
         console.error('Error loading secure PDF:', error);
-        alert('Failed to load secure document');
+        
+        // Show error in PDF.js interface
+        if (window.PDFViewerApplication && window.PDFViewerApplication.l10n) {
+            const errorMessage = `Secure Document Error: ${error.message}`;
+            window.PDFViewerApplication.error(errorMessage);
+        } else {
+            alert('Failed to load secure document: ' + error.message);
+        }
     }
-}
+});
 
-// Start auto-loading when PDF.js is ready
-document.addEventListener('webviewerloaded', autoLoadSecurePDF);
-
-// Fallback - also try when page loads
-window.addEventListener('load', () => {
-    setTimeout(autoLoadSecurePDF, 1000);
+// Also set up URL parameter approach as fallback
+window.addEventListener('DOMContentLoaded', function() {
+    // Check if there's already a file parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('file')) {
+        console.log('No file parameter found, will auto-load when PDF.js is ready');
+    }
 });
 </script>
 
 <!-- Watermark -->
-<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 100px; color: rgba(0,0,0,0.05); pointer-events: none; z-index: 999; user-select: none; font-weight: bold;">CONFIDENTIAL</div>
+<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 100px; color: rgba(0,0,0,0.05); pointer-events: none; z-index: 999; user-select: none; font-weight: bold;">TEST</div>
       
   </body>
 </html>
