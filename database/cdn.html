@@ -826,36 +826,6 @@ See https://github.com/adobe-type-tools/cmap-resources
 </script>
 
 <script>
-// Security Protection (same as above)
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-    if (e.key === 'F12' || 
-        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
-        (e.ctrlKey && ['U', 'S', 'P', 'A'].includes(e.key))) {
-        e.preventDefault();
-        return false;
-    }
-    if (e.key === 'PrintScreen' || 
-        (e.ctrlKey && e.shiftKey && e.key === 'S') ||
-        (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
-        e.preventDefault();
-        return false;
-    }
-});
-
-window.addEventListener('beforeprint', e => {
-    e.preventDefault();
-    return false;
-});
-
-window.addEventListener('blur', () => {
-    document.body.style.filter = 'blur(10px)';
-});
-
-window.addEventListener('focus', () => {
-    document.body.style.filter = 'none';
-});
-
 // Configuration
 const SERVER_URL = 'https://secure-pdf-server.shubhham-jain.workers.dev';
 const PDF_FILENAME = 'OuakGZqdLSHfdmgITucteMiV.pdf'; // CHANGE THIS LINE ONLY
