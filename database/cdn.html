@@ -824,5 +824,100 @@ See https://github.com/adobe-type-tools/cmap-resources
   });
 })();
 </script>
+
+<script>
+// Security Protection
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+        (e.ctrlKey && ['U', 'S', 'P', 'A'].includes(e.key))) {
+        e.preventDefault();
+        return false;
+    }
+    if (e.key === 'PrintScreen' || 
+        (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+        (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+window.addEventListener('beforeprint', e => {
+    e.preventDefault();
+    return false;
+});
+
+window.addEventListener('blur', () => {
+    document.body.style.filter = 'blur(10px)';
+});
+
+window.addEventListener('focus', () => {
+    document.body.style.filter = 'none';
+});
+
+// Configuration
+const SERVER_URL = 'https://secure-pdf-server.shubhham-jain.workers.dev';
+const PDF_FILENAME = 'OuakGZqdLSHfdmgITucteMiV.pdf'; // CHANGE THIS LINE ONLY
+
+// Auto-load secure PDF when PDF.js is ready
+document.addEventListener('webviewerloaded', async function() {
+    console.log('PDF.js viewer loaded, requesting secure access...');
+    
+    try {
+        // Request secure access
+        const response = await fetch(`${SERVER_URL}/api/secure-access`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ filename: PDF_FILENAME })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: Access denied`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Get the secure PDF URL
+            const secureUrl = `${SERVER_URL}${data.viewerUrl}`;
+            console.log('Secure URL obtained, loading PDF:', secureUrl);
+            
+            // Load the PDF using PDFViewerApplication
+            if (window.PDFViewerApplication && window.PDFViewerApplication.open) {
+                await window.PDFViewerApplication.open(secureUrl);
+                console.log('PDF loaded successfully');
+            } else {
+                throw new Error('PDFViewerApplication not available');
+            }
+        } else {
+            throw new Error(data.error || 'Access denied');
+        }
+    } catch (error) {
+        console.error('Error loading secure PDF:', error);
+        
+        // Show error in PDF.js interface
+        if (window.PDFViewerApplication && window.PDFViewerApplication.l10n) {
+            const errorMessage = `Secure Document Error: ${error.message}`;
+            window.PDFViewerApplication.error(errorMessage);
+        } else {
+            alert('Failed to load secure document: ' + error.message);
+        }
+    }
+});
+
+// Also set up URL parameter approach as fallback
+window.addEventListener('DOMContentLoaded', function() {
+    // Check if there's already a file parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('file')) {
+        console.log('No file parameter found, will auto-load when PDF.js is ready');
+    }
+});
+</script>
+
   </body>
 </html>
