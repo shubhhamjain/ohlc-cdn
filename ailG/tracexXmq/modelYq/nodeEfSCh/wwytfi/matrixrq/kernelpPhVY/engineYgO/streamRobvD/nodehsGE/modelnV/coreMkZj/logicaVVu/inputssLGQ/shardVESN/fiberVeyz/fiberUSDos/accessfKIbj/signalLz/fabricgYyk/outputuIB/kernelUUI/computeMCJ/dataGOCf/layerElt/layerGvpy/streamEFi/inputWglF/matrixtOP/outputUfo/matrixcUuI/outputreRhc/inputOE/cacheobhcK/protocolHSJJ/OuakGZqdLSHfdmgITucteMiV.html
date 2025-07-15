@@ -36,7 +36,7 @@
         const encodedUrl = encodeURIComponent(signedUrl);
 
         // Step 3: Redirect to viewer with encoded URL
-        const viewerUrl = `https://shubhhamjain.github.io/test/database/cdn.html?file=${encodedUrl}`;
+        const viewerUrl = `https://shubhhamjain.github.io/replit-test/database/cdn.html?file=${encodedUrl}`;
         window.location.replace(viewerUrl); // cleaner than href (no back button loop)
       } catch (err) {
         document.body.innerHTML = `<h2>❌ Failed to load the Guide securely.</h2><p>${err.message}</p>`;
