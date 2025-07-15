@@ -1,241 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debug Secure Guide Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-        }
-        
-        .debug-info {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .debug-info h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        
-        .debug-info pre {
-            background: #f8f8f8;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-size: 12px;
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            font-size: 18px;
-            color: #666;
-        }
-        
-        .error {
-            color: #cc0000;
-            font-weight: bold;
-        }
-        
-        .success {
-            color: #008800;
-            font-weight: bold;
-        }
-        
-        .viewer-container {
-            width: 100%;
-            height: 600px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .step {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f9f9f9;
-            border-left: 4px solid #ccc;
-        }
-        
-        .step.success {
-            border-left-color: #4CAF50;
-            background: #f1f8e9;
-        }
-        
-        .step.error {
-            border-left-color: #f44336;
-            background: #ffebee;
-        }
-        
-        .step.loading {
-            border-left-color: #2196F3;
-            background: #e3f2fd;
-        }
-    </style>
-</head>
-<body>
-    <div class="debug-info">
-        <h3>🔍 Debug Information</h3>
-        <div id="debug-steps"></div>
-    </div>
-    
-    <div id="loading" class="loading">
-        🔐 Testing secure document loading...
-    </div>
-    
-    <iframe id="viewer" class="viewer-container" 
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            allow="clipboard-read; clipboard-write"></iframe>
+<!-- Replace your current PDF links with this -->
+<button onclick="requestSecureAccess('OuakGZqdLSHfdmgITucteMiV.pdf')" class="secure-access-btn">
+  Access Document
+</button>
 
-    <script>
-        class DebugSecurePDFViewer {
-            constructor() {
-                this.tokenUrl = 'https://cryptograph-oneoff.shubhham-jain.workers.dev/';
-                this.debugSteps = document.getElementById('debug-steps');
-                this.init();
-            }
-            
-            addDebugStep(message, status = 'loading') {
-                const step = document.createElement('div');
-                step.className = `step ${status}`;
-                step.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
-                this.debugSteps.appendChild(step);
-                console.log(`[DEBUG] ${message}`);
-            }
-            
-            async init() {
-                try {
-                    this.addDebugStep('🚀 Starting debug process...');
-                    
-                    // Step 1: Extract filename
-                    const filename = this.extractFilename();
-                    this.addDebugStep(`📁 Extracted filename: ${filename || 'NULL'}`, filename ? 'success' : 'error');
-                    
-                    if (!filename) {
-                        throw new Error('Invalid document reference - could not extract filename');
-                    }
-                    
-                    // Step 2: Test token endpoint
-                    this.addDebugStep('🔑 Testing token endpoint...');
-                    const tokenData = await this.getSecureToken(filename);
-                    this.addDebugStep(`✅ Token received: ${JSON.stringify(tokenData, null, 2)}`, 'success');
-                    
-                    // Step 3: Test signed URL
-                    this.addDebugStep('🔗 Testing signed URL...');
-                    const testResponse = await fetch(tokenData.signedUrl, {
-                        method: 'HEAD' // Just test if URL is accessible
-                    });
-                    this.addDebugStep(`📊 Signed URL status: ${testResponse.status} ${testResponse.statusText}`, 
-                                     testResponse.ok ? 'success' : 'error');
-                    
-                    // Step 4: Load PDF viewer
-                    this.addDebugStep('📖 Loading PDF viewer...');
-                    await this.loadSecurePDF(tokenData);
-                    
-                } catch (error) {
-                    this.addDebugStep(`❌ Error: ${error.message}`, 'error');
-                    this.addDebugStep(`🔍 Full error: ${JSON.stringify(error, null, 2)}`, 'error');
-                    this.showError(error.message);
-                }
-            }
-            
-            extractFilename() {
-                // Show detailed extraction process
-                const path = window.location.pathname;
-                const segments = path.split('/');
-                const lastSegment = segments[segments.length - 1];
-                
-                this.addDebugStep(`🌐 Current URL: ${window.location.href}`);
-                this.addDebugStep(`📂 Path segments: ${JSON.stringify(segments)}`);
-                this.addDebugStep(`📄 Last segment: ${lastSegment}`);
-                
-                if (lastSegment.endsWith('.html')) {
-                    const pdfName = lastSegment.replace('.html', '.pdf');
-                    this.addDebugStep(`🔄 Converted to PDF name: ${pdfName}`);
-                    return pdfName;
-                }
-                return null;
-            }
-            
-            async getSecureToken(filename) {
-                const fullUrl = `${this.tokenUrl}?file=${encodeURIComponent(filename)}`;
-                this.addDebugStep(`🌐 Token request URL: ${fullUrl}`);
-                
-                const response = await fetch(fullUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                this.addDebugStep(`📡 Token response status: ${response.status} ${response.statusText}`);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    this.addDebugStep(`❌ Token error response: ${errorText}`, 'error');
-                    throw new Error(`Token request failed: ${response.status} - ${errorText}`);
-                }
-                
-                const data = await response.json();
-                return data;
-            }
-            
-            async loadSecurePDF(tokenData) {
-                const iframe = document.getElementById('viewer');
-                const loading = document.getElementById('loading');
-                
-                // Create PDF.js viewer URL
-                const viewerUrl = `https://shubhhamjain.github.io/replit-test/web/viewer.html?file=${encodeURIComponent(tokenData.signedUrl)}`;
-                this.addDebugStep(`📱 PDF viewer URL: ${viewerUrl}`);
-                
-                iframe.src = viewerUrl;
-                iframe.style.display = 'block';
-                loading.style.display = 'none';
-                
-                // Handle iframe events
-                iframe.onload = () => {
-                    this.addDebugStep('✅ PDF viewer iframe loaded successfully', 'success');
-                };
-                
-                iframe.onerror = (error) => {
-                    this.addDebugStep(`❌ PDF viewer iframe error: ${error}`, 'error');
-                };
-                
-                // Test if PDF.js viewer exists
-                try {
-                    const viewerTest = await fetch('https://shubhhamjain.github.io/replit-test/web/viewer.html');
-                    this.addDebugStep(`📋 PDF.js viewer test: ${viewerTest.status} ${viewerTest.statusText}`, 
-                                     viewerTest.ok ? 'success' : 'error');
-                } catch (error) {
-                    this.addDebugStep(`❌ PDF.js viewer test failed: ${error.message}`, 'error');
-                }
-            }
-            
-            showError(message) {
-                const loading = document.getElementById('loading');
-                loading.innerHTML = `❌ Error: ${message}`;
-                loading.className = 'loading error';
-            }
-        }
-        
-        // Initialize the debug viewer when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                new DebugSecurePDFViewer();
-            });
-        } else {
-            new DebugSecurePDFViewer();
-        }
-    </script>
-</body>
-</html>
+<script>
+async function requestSecureAccess(filename) {
+  try {
+    // Generate token through your system, not directly to Cloudflare
+    const response = await fetch('/api/secure-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Open in secure viewer with time-limited URL
+      window.open(data.viewerUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      alert('Access denied: ' + data.error);
+    }
+  } catch (error) {
+    alert('Failed to request access');
+  }
+}
+</script>
