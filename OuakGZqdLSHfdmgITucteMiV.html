@@ -1,28 +1,220 @@
-<!-- Replace your current PDF links with this -->
-<button onclick="requestSecureAccess('OuakGZqdLSHfdmgITucteMiV.pdf')" class="secure-access-btn">
-  Access Document
-</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Guide Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .secure-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .secure-access-btn {
+            background: #1976d2;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .secure-access-btn:hover {
+            background: #1565c0;
+        }
+        .secure-access-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #d1ecf1; color: #0c5460; }
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 48px;
+            color: rgba(0,0,0,0.1);
+            pointer-events: none;
+            z-index: 1000;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">SECURE DOCUMENT</div>
+    
+    <div class="secure-container">
+        <h1>🔒 Secure Document Access</h1>
+        
+        <div class="security-notice">
+            <strong>Security Notice:</strong> This document is protected by DRM. 
+            Access is logged and monitored. Unauthorized sharing is prohibited.
+        </div>
 
-<script>
-async function requestSecureAccess(filename) {
-  try {
-    // Generate token through your system, not directly to Cloudflare
-    const response = await fetch('/api/secure-access', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename })
-    });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Open in secure viewer with time-limited URL
-      window.open(data.viewerUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      alert('Access denied: ' + data.error);
-    }
-  } catch (error) {
-    alert('Failed to request access');
-  }
-}
-</script>
+        <h2>Available Documents</h2>
+        
+        <!-- REPLACE WITH YOUR ACTUAL PDF FILENAMES -->
+        <button onclick="requestSecureAccess('OuakGZqdLSHfdmgITucteMiV.pdf')" class="secure-access-btn" id="btn-1">
+            📄 Access Technical Guide
+        </button>
+        
+        <!-- ADD MORE BUTTONS FOR OTHER DOCUMENTS -->
+        <button onclick="requestSecureAccess('another-document.pdf')" class="secure-access-btn" id="btn-2">
+            📄 Access Another Document
+        </button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        // Security Protection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+                (e.ctrlKey && ['U', 'S', 'P', 'A'].includes(e.key))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+                e.preventDefault();
+                alert('Screenshots are disabled for security');
+                return false;
+            }
+        });
+
+        window.addEventListener('beforeprint', e => {
+            e.preventDefault();
+            alert('Printing is disabled for security');
+        });
+
+        // Prevent drag and drop
+        document.addEventListener('dragstart', e => e.preventDefault());
+        document.addEventListener('drop', e => e.preventDefault());
+        document.addEventListener('dragover', e => e.preventDefault());
+
+        // CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
+        const SERVER_URL = 'https://secure-pdf-server.shubhham-jain.workers.dev';
+        
+        async function requestSecureAccess(filename) {
+            const statusDiv = document.getElementById('status');
+            const allButtons = document.querySelectorAll('.secure-access-btn');
+            
+            // Disable all buttons during request
+            allButtons.forEach(btn => btn.disabled = true);
+            
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '🔄 Requesting secure access...';
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/secure-access`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ filename })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = '✅ Access granted! Opening secure viewer...';
+                    
+                    // Open secure PDF viewer
+                    const secureUrl = `${SERVER_URL}${data.viewerUrl}`;
+                    window.open(secureUrl, '_blank', 'noopener,noreferrer,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
+                    
+                    // Hide status after 3 seconds
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = '❌ Access denied: ' + (data.error || 'Unknown error');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Failed to request access. Please try again.';
+                console.error('Access request failed:', error);
+            } finally {
+                // Re-enable buttons after 2 seconds
+                setTimeout(() => {
+                    allButtons.forEach(btn => btn.disabled = false);
+                }, 2000);
+            }
+        }
+
+        // Additional security measures
+        let devToolsOpen = false;
+        setInterval(() => {
+            if (window.outerHeight - window.innerHeight > 160 || window.outerWidth - window.innerWidth > 160) {
+                if (!devToolsOpen) {
+                    devToolsOpen = true;
+                    alert('Developer tools detected. Access will be logged.');
+                    // Optionally redirect away or close window
+                    // window.location.href = 'about:blank';
+                }
+            } else {
+                devToolsOpen = false;
+            }
+        }, 500);
+
+        // Blur content when window loses focus (screenshot prevention)
+        window.addEventListener('blur', () => {
+            document.body.style.filter = 'blur(10px)';
+        });
+
+        window.addEventListener('focus', () => {
+            document.body.style.filter = 'none';
+        });
+
+        // Detect if page is being recorded/shared
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.body.style.filter = 'blur(10px)';
+            } else {
+                document.body.style.filter = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
