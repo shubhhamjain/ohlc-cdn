@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Guide Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 18px;
+            color: #cc0000;
+            text-align: center;
+        }
+        
+        .viewer-container {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            display: none;
+        }
+        
+        /* Disable right-click context menu */
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Hide scrollbars on body but keep functionality */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="no-select">
+    <div id="loading" class="loading">
+        🔐 Loading secure document...
+    </div>
+    
+    <div id="error" class="error" style="display: none;">
+        ❌ Unable to load document. Please try again.
+    </div>
+    
+    <iframe id="viewer" class="viewer-container" 
+            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            allow="clipboard-read; clipboard-write"></iframe>
+
+    <script>
+        class SecurePDFViewer {
+            constructor() {
+                this.tokenUrl = 'https://cryptograph-oneoff.shubhham-jain.workers.dev/';
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    // Extract filename from URL path
+                    const filename = this.extractFilename();
+                    if (!filename) {
+                        throw new Error('Invalid document reference');
+                    }
+                    
+                    // Get secure token
+                    const tokenData = await this.getSecureToken(filename);
+                    
+                    // Load PDF with token
+                    await this.loadSecurePDF(tokenData);
+                    
+                    // Set up security measures
+                    this.setupSecurityMeasures();
+                    
+                } catch (error) {
+                    console.error('Viewer initialization failed:', error);
+                    this.showError();
+                }
+            }
+            
+            extractFilename() {
+                // Extract filename from the complex URL structure
+                const path = window.location.pathname;
+                const segments = path.split('/');
+                const lastSegment = segments[segments.length - 1];
+                
+                // Remove .html extension and add .pdf
+                if (lastSegment.endsWith('.html')) {
+                    return lastSegment.replace('.html', '.pdf');
+                }
+                return null;
+            }
+            
+            async getSecureToken(filename) {
+                const response = await fetch(`${this.tokenUrl}?file=${encodeURIComponent(filename)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Token request failed: ${response.status}`);
+                }
+                
+                return await response.json();
+            }
+            
+            async loadSecurePDF(tokenData) {
+                const iframe = document.getElementById('viewer');
+                const loading = document.getElementById('loading');
+                
+                // Create PDF.js viewer URL with the signed URL
+                // This preserves ALL PDF functionality including links, bookmarks, search, etc.
+                const viewerUrl = `https://shubhhamjain.github.io/replit-test/web/viewer.html?file=${encodeURIComponent(tokenData.signedUrl)}`;
+                
+                iframe.src = viewerUrl;
+                iframe.style.display = 'block';
+                loading.style.display = 'none';
+                
+                // Handle iframe load events
+                iframe.onload = () => {
+                    console.log('PDF viewer loaded successfully');
+                };
+                
+                iframe.onerror = () => {
+                    this.showError();
+                };
+            }
+            
+            setupSecurityMeasures() {
+                // Disable right-click (but preserve PDF.js functionality)
+                document.addEventListener('contextmenu', (e) => {
+                    // Allow right-click inside the PDF viewer for PDF.js features
+                    if (e.target.closest('#viewer')) {
+                        return true;
+                    }
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Disable specific key combinations while preserving PDF navigation
+                document.addEventListener('keydown', (e) => {
+                    // Preserve PDF.js shortcuts but disable download/print
+                    if (e.ctrlKey && e.keyCode === 83) { // Ctrl+S
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (e.ctrlKey && e.keyCode === 80) { // Ctrl+P
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (e.keyCode === 123) { // F12
+                        e.preventDefault();
+                        return false;
+                    }
+                    // Allow other shortcuts like Ctrl+F (search), Ctrl+G (next), etc.
+                });
+                
+                // Prevent drag and drop
+                document.addEventListener('dragstart', (e) => e.preventDefault());
+                document.addEventListener('drop', (e) => e.preventDefault());
+                
+                // Monitor iframe for security
+                const iframe = document.getElementById('viewer');
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+                            if (!iframe.src.includes('viewer.html')) {
+                                window.location.reload();
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(iframe, { attributes: true });
+            }
+            
+            showError() {
+                const loading = document.getElementById('loading');
+                const error = document.getElementById('error');
+                
+                loading.style.display = 'none';
+                error.style.display = 'flex';
+            }
+        }
+        
+        // Initialize the secure viewer when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new SecurePDFViewer();
+            });
+        } else {
+            new SecurePDFViewer();
+        }
+        
+        // Clear any sensitive data on page unload
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.clear();
+        });
+    </script>
+</body>
+</html>
