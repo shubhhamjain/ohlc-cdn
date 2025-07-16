@@ -3,74 +3,318 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Access Restricted | OHLC</title>
-  <!-- Favicon links start -->
-<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-<link rel="manifest" href="/favicon/site.webmanifest">
-<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-<!-- Favicon links end -->
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <title>OHLC</title>
   <style>
     body {
+      background-color: #d2d4d6;
+      color: #111;
+      font-family: 'IBM Plex Mono', monospace;
       margin: 0;
       padding: 0;
-      font-family: 'IBM Plex Mono', monospace;
-      background-color: #0e0e0e;
-      color: #00ff9d;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
       text-align: center;
-      box-sizing: border-box;
-    }
-
-    .container {
-      max-width: 580px;
-      padding: 0 24px;
     }
 
     h1 {
       font-size: 18px;
-      font-weight: 300; /* Thinner heading */
-      margin-bottom: 16px;
-      letter-spacing: 0.5px;
-    }
-
-    p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #ccc; /* Slightly softened tone */
-      font-weight: 300; /* Thinner paragraph text */
-    }
-
-    a {
-      color: #00c7ff;
-      text-decoration: none;
       font-weight: 400;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .comment {
-      color: #999;
-      font-size: 13px;
-      margin-bottom: 20px;
-      font-weight: 300;
+      max-width: 520px;
+      padding: 0 24px;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="comment">//cdn.system-notice</div>
-    <h1>This site is part of our content delivery network and isn't meant to be accessed directly.</h1>
-    <p>Please <a href="https://ohlc.in">visit the main site</a> to explore your purchased content.</p>
-  </div>
+  <h1 id="line">...</h1>
+
+  <script>
+    const lines = [
+      "404 but cooler.",
+      "You found a door with no handle.",
+      "No user-facing logic here.",
+      "Access denied, but in a nice way.",
+      "You’re behind the curtain now.",
+      "This is not the front entrance.",
+      "Hmm. Curious, aren’t we?",
+      "This page doesn’t exist. Officially.",
+      "You’re either lost or deep.",
+      "There's nothing here. Except this.",
+      "System interface, not user interface.",
+      "Why did you click that?",
+      "Okay but seriously, leave.",
+      "You’re too early for this feature.",
+      "This URL was a decoy.",
+      "Congrats, you’ve reached the void.",
+      "You’ve reached a layer beneath context.",
+      "Interfaces terminate before this point.",
+      "There's nothing to render here.",
+      "This location has no outcome.",
+      "Data moves here. Humans don’t.",
+      "The system saw your request. It withheld comment.",
+      "This node processes, not replies.",
+      "You’ve reached the edge of abstraction.",
+      "This is not a functional zone.",
+      "You pinged something inert.",
+      "Your access lacks intent headers.",
+      "This space isn't interactive. It's reflective.",
+      "You've entered a part of the system that assumes you're not real.",
+      "Front-end logic was not compiled here.",
+      "You touched infrastructure. It didn’t touch back.",
+      "Rendering stopped before you arrived.",
+      "The system had nothing to display.",
+      "You found a clean surface — untouched by UX.",
+      "This request is quietly deprecated.",
+      "Access noted. Interpretation skipped.",
+      "No template was assigned to this path.",
+      "This endpoint resists semantics.",
+      "No user journey passes through here.",
+      "You stepped outside the narrative layer.",
+      "This zone is beyond resolution.",
+      "There’s no story here. Just state.",
+      "You are reading the absence of output.",
+      "This response was intentional silence.",
+      "No function mapped to this interaction.",
+      "You asked nothing. The system obliged.",
+      "Metadata only. No content to return.",
+      "You found a loop with no entry.",
+      "The UI never made it this far.",
+      "You are at the border of meaning.",
+      "Nothing failed. Nothing succeeded.",
+      "This isn't an error. It's a refusal.",
+      "Content not found. Because it was never placed.",
+      "You reached a deliberate void.",
+      "This is a node that doesn’t explain itself.",
+      "You’re beyond the affordance zone.",
+      "Not an error. Just not yours.",
+      "This was never meant to be looked at.",
+      "This isn’t hidden. It’s ignored.",
+      "The system saw your request. It withheld reply.",
+      "There’s no logic past this point.",
+      "This is where outputs go to die.",
+      "You're querying a surface that discards interaction.",
+      "This page is here so something else could work.",
+      "This is not a user-facing surface.",
+  "You’ve reached a layer beneath context.",
+  "Interfaces terminate before this point.",
+  "There's nothing to render here.",
+  "This location has no outcome.",
+  "Data moves here. Humans don’t.",
+  "The system saw your request. It withheld comment.",
+  "This node processes, not replies.",
+  "You’ve reached the edge of abstraction.",
+  "This is not a functional zone.",
+  "You pinged something inert.",
+  "Your access lacks intent headers.",
+  "This space isn't interactive. It's reflective.",
+  "You've entered a part of the system that assumes you're not real.",
+  "Front-end logic was not compiled here.",
+  "This region is purpose-built to be ignored.",
+  "Rendering stopped before you arrived.",
+  "The system had nothing to display.",
+  "You found a clean surface — untouched by UX.",
+  "This request is quietly deprecated.",
+  "Access noted. Interpretation skipped.",
+  "No template was assigned to this path.",
+  "This endpoint resists semantics.",
+  "No user journey passes through here.",
+  "You stepped outside the narrative layer.",
+  "This zone is beyond resolution.",
+  "There’s no story here. Just state.",
+  "You are reading the absence of output.",
+  "This response was intentional silence.",
+  "No function mapped to this interaction.",
+  "You asked nothing. The system obliged.",
+  "Metadata only. No content to return.",
+  "You found a loop with no entry.",
+  "The UI never made it this far.",
+  "You are at the border of meaning.",
+  "Nothing failed. Nothing succeeded.",
+  "This isn't an error. It's a refusal.",
+  "Content not found. Because it was never placed.",
+  "You reached a deliberate void.",
+  "This is a node that doesn’t explain itself.",
+  "You’re beyond the affordance zone.",
+  "Not an error. Just not yours.",
+  "This was never meant to be looked at.",
+  "This isn’t hidden. It’s ignored.",
+  "The system saw your request. It withheld reply.",
+  "There’s no logic past this point.",
+  "This is where outputs go to die.",
+  "You're querying a surface that discards interaction.",
+  "This page is here so something else could work.",
+  "This zone has no interactive affordance.",
+  "You're touching raw infrastructure.",
+  "Front-end doesn’t exist here.",
+  "Only system traffic passes here.",
+  "There’s no UI to bridge here.",
+  "You’ve entered the silent layer.",
+  "Nothing resolves past this boundary.",
+  "You’re in a no-UX zone.",
+  "No handler acknowledges this.",
+  "This node doesn’t speak human.",
+  "You’ve reached a logic vacuum.",
+  "Nothing to load. Nothing to click.",
+  "You’re behind the visibility wall.",
+  "No script runs beyond here.",
+  "This is a silent handshake zone.",
+  "You’ve crossed the UX freeze point.",
+  "This surface eats requests.",
+  "There is no response payload.",
+  "This page is purposefully blank.",
+  "You’re outside the view layer.",
+  "No renderer applied to this path.",
+  "You encountered a functional void.",
+  "No aspect of UX flows here.",
+  "Interaction is a dead end.",
+  "System layers here don’t animate.",
+  "No HTTP status explanation.",
+  "You’re within the black‑box layer.",
+  "No telemetry triggers visible results.",
+  "You’ve reached the minimal context.",
+  "Nothing meaningful loads here.",
+  "This page is statically null.",
+  "You’re consuming only server bone.",
+  "There’s no UX fall‑back here.",
+  "You are behind the UX curtain.",
+  "No front‑matter to parse.",
+  "This is a silent data path.",
+  "No visible context remains.",
+  "Only silent logs exist here.",
+  "Interaction ended before start.",
+  "This page is content‑agnostic.",
+  "You’ve stepped into runtime margin.",
+  "No scaffolding lives here.",
+  "Only internal traces remain.",
+  "This node refuses interaction.",
+  "There is no transform layer.",
+  "You navigated outside UI reach.",
+  "No CSS exists on this path.",
+  "You’re viewing a system core.",
+  "No UX layer attached.",
+  "Only infrastructure dimensions remain.",
+  "You touched a minimal endpoint.",
+  "Nothing beyond system kernel.",
+  "No event loop enters here.",
+  "You entered an empty shell.",
+  "This route is unrenderable.",
+  "No UI bindings on this endpoint.",
+  "You reached a stubbed path.",
+  "There is no user process here.",
+  "You have hit the inactivity margin.",
+  "This endpoint ignores purpose.",
+  "Only silent response persists.",
+  "No intent recognized here.",
+  "You are behind the UX shield.",
+  "This page has no component tree.",
+  "Only infrastructure resides here.",
+  "You emptied the render buffer.",
+  "No entry point was called.",
+  "You’re beyond server-side logic.",
+  "Only static silence is served.",
+  "No view code is compiled here.",
+  "You accessed a stub endpoint.",
+  "No interactive element attaches.",
+  "You hit a UX dead‑zone.",
+  "This surface doesn’t render.",
+  "No pipeline renders past this.",
+  "You’ve reached a low-level layer.",
+  "There is no UI present here.",
+  "Only internal metadata responds.",
+  "You hit a reserved path.",
+  "No page status is returned.",
+  "You are outside front‑end scope.",
+  "This request was notarized silently.",
+  "No user script interacts.",
+  "You are in a headless endpoint.",
+  "No templating found here.",
+  "You stood beyond abstraction.",
+  "This path never got compiled.",
+  "You accessed a reserved handle.",
+  "There is no user agent response.",
+  "Only blank presence remains.",
+  "You broke context through code.",
+  "This endpoint isn’t for browsing.",
+  "Only silent buffering occurs.",
+  "No public surface exists here.",
+  "You reached a logical void.",
+  "No route is mapped to this URL.",
+  "You touched a system seam.",
+  "Only backend remains.",
+  "No UX lifecycle runs here.",
+  "You are in a kernel space.",
+  "No validation runs on this page.",
+  "Only param parsing is executed.",
+  "You intercepted nothing visible.",
+  "No visual feedback is produced.",
+  "You viewed an unbound resource.",
+  "Only logs record your access.",
+  "No response analog is generated.",
+  "You submitted to a null handler.",
+  "No contextual logic exists here.",
+  "This zone is scriptless by design.",
+  "Only infrastructure signatures remain.",
+  "This view is non-functional.",
+  "There’s no dynamic state present.",
+  "Your input was reduced to entropy.",
+  "This node is protocol-only.",
+  "Nothing here is for rendering.",
+  "No API connects to this shell.",
+  "You're touching something dormant.",
+  "This layer is not wired to output.",
+  "This file is part of the silence.",
+  "You’re outside interaction design.",
+  "What you requested is structurally absent.",
+  "No interactivity. No resistance.",
+  "The stack ends here.",
+  "There’s no logic waiting.",
+  "You’ve hit the unexposed fragment.",
+  "This node exists in stillness.",
+  "Requests in this space disappear.",
+  "Nothing compiles past this address.",
+  "This object contains no handlers.",
+  "All logic was intentionally removed.",
+  "This address skips the visual layer.",
+  "This is just scaffolding for silence.",
+  "You touched an anchor point of nothing.",
+  "This space operates without reply.",
+  "There is no layout for this view.",
+  "This is the backend’s blindfold.",
+  "All state ends here.",
+  "Nothing is routed to this path.",
+  "The system provides no feedback.",
+  "This page will never say more than this."
+    ];
+
+    const STORAGE_KEY = "seenLines";
+
+    function getUnseenIndex() {
+      let seen = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+      // All seen? Reset
+      if (seen.length >= lines.length) {
+        seen = [];
+      }
+
+      // Get unseen indexes
+      const unseen = lines
+        .map((_, i) => i)
+        .filter(index => !seen.includes(index));
+
+      // Pick random unseen
+      const index = unseen[Math.floor(Math.random() * unseen.length)];
+
+      // Save updated list
+      seen.push(index);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
+
+      return index;
+    }
+
+    const index = getUnseenIndex();
+    document.getElementById("line").textContent = lines[index];
+  </script>
 </body>
 </html>
