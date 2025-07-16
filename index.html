@@ -21,7 +21,7 @@
     h1 {
       font-size: 18px;
       font-weight: 400;
-      max-width: 480px;
+      max-width: 520px;
       padding: 0 24px;
       line-height: 1.6;
     }
@@ -45,12 +45,88 @@
       "System interface, not user interface.",
       "Why did you click that?",
       "Okay but seriously, leave.",
+      "You’re too early for this feature.",
       "This URL was a decoy.",
-      "Congrats, you’ve reached the void."
+      "Congrats, you’ve reached the void.",
+      "This is not a user-facing surface.",
+      "You’ve reached a layer beneath context.",
+      "Interfaces terminate before this point.",
+      "There's nothing to render here.",
+      "This location has no outcome.",
+      "Data moves here. Humans don’t.",
+      "The system saw your request. It withheld comment.",
+      "This node processes, not replies.",
+      "You’ve reached the edge of abstraction.",
+      "This is not a functional zone.",
+      "You pinged something inert.",
+      "Your access lacks intent headers.",
+      "This space isn't interactive. It's reflective.",
+      "You've entered a part of the system that assumes you're not real.",
+      "Front-end logic was not compiled here.",
+      "This region is purpose-built to be ignored.",
+      "You touched infrastructure. It didn’t touch back.",
+      "Rendering stopped before you arrived.",
+      "The system had nothing to display.",
+      "You found a clean surface — untouched by UX.",
+      "This request is quietly deprecated.",
+      "Access noted. Interpretation skipped.",
+      "No template was assigned to this path.",
+      "This endpoint resists semantics.",
+      "No user journey passes through here.",
+      "You stepped outside the narrative layer.",
+      "This zone is beyond resolution.",
+      "There’s no story here. Just state.",
+      "You are reading the absence of output.",
+      "This response was intentional silence.",
+      "No function mapped to this interaction.",
+      "You asked nothing. The system obliged.",
+      "Metadata only. No content to return.",
+      "You found a loop with no entry.",
+      "The UI never made it this far.",
+      "You are at the border of meaning.",
+      "Nothing failed. Nothing succeeded.",
+      "This isn't an error. It's a refusal.",
+      "Content not found. Because it was never placed.",
+      "You reached a deliberate void.",
+      "This is a node that doesn’t explain itself.",
+      "You’re beyond the affordance zone.",
+      "Not an error. Just not yours.",
+      "This was never meant to be looked at.",
+      "This isn’t hidden. It’s ignored.",
+      "The system saw your request. It withheld reply.",
+      "There’s no logic past this point.",
+      "This is where outputs go to die.",
+      "You're querying a surface that discards interaction.",
+      "This page is here so something else could work."
     ];
 
-    const randomIndex = Math.floor(Math.random() * lines.length);
-    document.getElementById('line').textContent = lines[randomIndex];
+    const STORAGE_KEY = "seenLines";
+
+    function getUnseenIndex() {
+      let seen = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+      // All seen? Reset
+      if (seen.length >= lines.length) {
+        seen = [];
+      }
+
+      // Get unseen indexes
+      const unseen = lines
+        .map((_, i) => i)
+        .filter(index => !seen.includes(index));
+
+      // Pick random unseen
+      const index = unseen[Math.floor(Math.random() * unseen.length)];
+
+      // Save updated list
+      seen.push(index);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
+
+      return index;
+    }
+
+    const index = getUnseenIndex();
+    document.getElementById("line").textContent = lines[index];
   </script>
 </body>
 </html>
