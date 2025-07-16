@@ -16217,9 +16217,8 @@ initCom(PDFViewerApplication);
   PDFPrintServiceFactory.initGlobals(PDFViewerApplication);
 }
 {
-  const HOSTED_VIEWER_ORIGINS = new Set(["null", "http://mozilla.github.io", "https://mozilla.github.io", 
-                                         "https://shubhhamjain.github.io", "https://validatekey.shubhham-jain.workers.dev", 
-                                        "https://library.ohlc.in"]);
+  const HOSTED_VIEWER_ORIGINS = new Set(["null", "http://mozilla.github.io", "https://mozilla.github.io", "https://secure.ohlc.in", 
+                                        "https://cdn.ohlc.in"]);
   var validateFileURL = function (file) {
     if (!file) {
       return;
