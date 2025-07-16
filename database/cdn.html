@@ -857,21 +857,9 @@ const PDF_FILENAME = 'OuakGZqdLSHfdmgITucteMiV.pdf'; // CHANGE THIS LINE ONLY
                 console.log('Secure URL obtained:', secureUrl);
                 
                 // Add file parameter and reload
-                fetch(secureUrl)
-  .then(res => {
-    if (!res.ok) throw new Error("PDF fetch failed");
-    return res.blob();
-  })
-  .then(blob => {
-    const blobUrl = URL.createObjectURL(blob);
-    // Inject directly into PDF.js viewer
-    PDFViewerApplication.open(blobUrl);
-  })
-  .catch(err => {
-    console.error('Error loading secure PDF:', err);
-    alert("Failed to load secure PDF. Please refresh.");
-  });
-
+                urlParams.set('file', secureUrl);
+const newUrl = window.location.pathname + '?' + urlParams.toString();
+window.location.replace(newUrl);
             } else {
                 throw new Error(data.error || 'Access denied');
             }
