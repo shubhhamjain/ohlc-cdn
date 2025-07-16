@@ -1,104 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Access Restricted | OHLC</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Notice</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <meta name="theme-color" content="#000000" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/site.webmanifest">
-    <meta name="theme-color" content="#ffffff">
+  <style>
+    :root {
+      --bg: #000;
+      --text: #f2f2f2;
+      --muted: #666;
+      --accent: #00ffd0;
+    }
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <style>
-      :root {
-        --bg-color: #0b0b0c;
-        --text-color: #f5f5f7;
-        --accent-color: #00ffc3;
-        --muted-color: #888;
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 440px;
+      animation: fadeIn 0.7s ease-out;
+    }
+
+    .label {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
       }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: 'Inter', sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        text-align: center;
-        padding: 24px;
-      }
-
-      .container {
-        max-width: 480px;
-      }
-
-      .label {
-        font-size: 13px;
-        color: var(--muted-color);
-        margin-bottom: 12px;
-        letter-spacing: 0.5px;
-      }
-
-      h1 {
-        font-size: 20px;
-        font-weight: 500;
-        margin-bottom: 16px;
-        color: var(--text-color);
-      }
-
-      p {
-        font-size: 15px;
-        font-weight: 400;
-        color: #bbb;
-        margin-bottom: 20px;
-        line-height: 1.6;
-      }
-
-      a {
-        color: var(--accent-color);
-        text-decoration: none;
-        font-weight: 500;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .fade-in {
-        animation: fadeIn 1s ease-in-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container fade-in">
-      <div class="label">//cdn.system.notice</div>
-      <h1>Access to this node is restricted</h1>
-      <p>This server is part of our content delivery network and isn’t intended for direct access.</p>
-      <p>Please <a href="https://ohlc.in">return to the main site</a> to access your content.</p>
-    </div>
-  </body>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="label">//cdn.node</div>
+    <h1>This location isn’t available</h1>
+    <p>This server is part of our delivery infrastructure. Please <a href="https://ohlc.in">visit the main site</a> to continue.</p>
+  </div>
+</body>
 </html>
