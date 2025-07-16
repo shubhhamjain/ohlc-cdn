@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Node Access | OHLC CDN</title>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-  <meta name="theme-color" content="#ececec" />
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon/favicon-32x32.png" />
+  <meta name="theme-color" content="#d6d8db" />
 
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #ececec;
-      --panel: #ffffff;
-      --text: #222;
-      --muted: #777;
+      --bg: #d6d8db;
+      --panel: #f2f3f5;
+      --border: #c0c2c6;
+      --text-main: #1a1a1a;
+      --text-muted: #555;
       --link: #007aff;
     }
 
@@ -29,41 +30,49 @@
 
     body {
       background: var(--bg);
+      color: var(--text-main);
       font-family: 'IBM Plex Mono', monospace;
-      color: var(--text);
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
       padding: 24px;
     }
 
-    .wrapper {
+    .card {
       background: var(--panel);
-      padding: 48px 32px;
-      max-width: 480px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 520px;
       width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
     }
 
     .icon {
       width: 64px;
       height: 64px;
-      margin-bottom: 24px;
-      opacity: 0.85;
+      margin-bottom: 32px;
+      opacity: 0.7;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
     }
 
     h1 {
       font-size: 18px;
       font-weight: 500;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     p {
       font-size: 14px;
-      color: var(--muted);
+      color: var(--text-muted);
       line-height: 1.6;
     }
 
@@ -75,22 +84,15 @@
     a:hover {
       text-decoration: underline;
     }
-
-    .label {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 16px;
-      letter-spacing: 0.6px;
-    }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="label">// cdn.edge-node.07</div>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Cloudflare_Logo.svg" alt="Node Icon" class="icon" />
-    <h1>Node Interface Access Restricted</h1>
-    <p>This node is part of a secure content delivery system and isn’t meant for direct access.</p>
-    <p>Please <a href="https://ohlc.in">visit the main site</a> to continue.</p>
+  <div class="card">
+    <div class="label">/cdn/edge-node:47-status</div>
+    <img src="https://cdn-icons-png.flaticon.com/512/2983/2983780.png" alt="System Node Icon" class="icon" />
+    <h1>Interface access disabled</h1>
+    <p>This node is part of a distributed system infrastructure. Direct access is not supported.</p>
+    <p>Please <a href="https://ohlc.in">return to the main site</a> to continue.</p>
   </div>
 </body>
 </html>
